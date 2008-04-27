@@ -25,3 +25,9 @@ def with_lock(path, mode, callable):
 def is_locked(path):
     return exists(_get_lock_name(path)) 
 
+def write_content(path, stream):
+    def _write(f):
+        for line in stream:
+            f.write(line)
+    with_lock(path, 'wb', _write)
+
