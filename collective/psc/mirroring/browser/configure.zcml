@@ -1,6 +1,21 @@
 <configure
  xmlns:zope="http://namespaces.zope.org/zope"
  xmlns:browser="http://namespaces.zope.org/browser"
+ xmlns:five="http://namespaces.zope.org/five"
  >
+
+  <browser:page
+     for="Products.CMFPlone.Portal.PloneSite"
+     name="mirroring-config"
+     class=".config.FSMirrorConfigurationForm"
+     permission="cmf.ManagePortal"
+     />
+
+  <zope:adapter
+     for="Products.CMFPlone.Portal.PloneSite"
+     provides="collective.psc.mirroring.interfaces.IFSMirrorConfiguration"
+     factory=".config.grab_utility" />
+
+
 
 </configure>

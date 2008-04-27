@@ -1,0 +1,9 @@
+<componentregistry>
+    
+    <utilities>
+        <utility
+            interface="collective.psc.mirroring.interfaces.IFSMirrorConfiguration"
+            factory="collective.psc.mirroring.config.FSMirrorConfiguration" />
+    </utilities>
+    
+</componentregistry>
