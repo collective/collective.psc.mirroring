@@ -1,0 +1,15 @@
+<configure
+ xmlns:zope="http://namespaces.zope.org/zope"
+ xmlns:gs="http://namespaces.zope.org/genericsetup"
+ >
+ 
+    <gs:registerProfile
+        name="default"
+        title="PSC Mirroring"
+        directory="profiles/default"
+        description="Mirrors the files in PSC Releases on the filesystem"
+        provides="Products.GenericSetup.interfaces.EXTENSION"
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot" />
+
+
+</configure>
