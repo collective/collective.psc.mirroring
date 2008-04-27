@@ -1,5 +1,7 @@
 import unittest
 import os
+import threading
+import time
 
 curdir = os.path.dirname(__file__)
 
@@ -27,6 +29,31 @@ class TestLocker(unittest.TestCase):
         content = open(self.my_file).read()
         self.assertEquals(content, 'to it')
         self.assert_(not locker.is_locked(self.my_file))  
+
+    def test_thread_access(self):
+        # make sure the lock is really preventing several
+        # thread to conflict
+        class Worker(threading.Thread):
+            def __init__(self, filename, name):
+                threading.Thread.__init__(self, name=name)
+                self.filename = filename
+
+            def _write(self, file_):
+                for i in range(10):  
+                    file_.write('%s\n' % self.getName())
+                    time.sleep(0.4)
+
+            def run(self):
+                locker.with_lock(self.filename, 'w', self._write)
+        
+        w1 = Worker(self.my_file, 'worker1')
+        w1.start()
+        self.assert_(locker.is_locked(self.my_file))
+        self.assertRaises(locker.AlreadyLocked, 
+                          locker.with_lock,
+                          self.my_file, 'w', lambda f: f.write('.'))
+        w1.join()
+
 
     def test_write_content(self):
         content = open(os.path.join(curdir, 'sample.tar.gz'))
