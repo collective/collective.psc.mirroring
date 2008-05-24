@@ -79,7 +79,11 @@ class TestCase(ptc.PloneTestCase):
         
         with_lock(filename, 'wb', locked_state)
 
-        
+    def test_same_file_exists(self):
+        # we want to avoid copying a file that is already there
+        # using MD5 keys
+        pass
+
 def test_suite():
     return unittest.TestSuite((unittest.makeSuite(TestCase),))
 

@@ -12,9 +12,10 @@ class TestLocker(unittest.TestCase):
     def setUp(self):
         self.my_file = os.path.join(curdir, 'sample')
         self.target = os.path.join(curdir, 'target.tar.gz')
+        self.index = os.path.join(curdir, 'index')
 
     def tearDown(self):
-        for f in (self.target, self.my_file):
+        for f in (self.target, self.my_file, self.index):
             if os.path.exists(f):
                 os.remove(f)
 
@@ -29,6 +30,11 @@ class TestLocker(unittest.TestCase):
         content = open(self.my_file).read()
         self.assertEquals(content, 'to it')
         self.assert_(not locker.is_locked(self.my_file))  
+
+    def test_file_hash(self):
+        open(self.target, 'w').write('ok')
+        hash = locker.file_hash(self.target)
+        self.assertEquals(hash, '444bcb3a3fcf8389296c49467f27e1d6')
 
     def test_thread_access(self):
         # make sure the lock is really preventing several
@@ -64,7 +70,43 @@ class TestLocker(unittest.TestCase):
         res = open(self.target).read()
         
         self.assertEquals(wanted, res)
+       
+    def test_basic_locking_with_index(self):
         
+        def my_process2(the_file):
+            self.assert_(locker.is_locked(self.my_file))
+            the_file.write('to it 2')
+
+        def my_process(the_file):
+            self.assert_(locker.is_locked(self.my_file))
+            the_file.write('to it')
+        
+        # let's lock a file
+        locker.with_lock(self.my_file, 'w', my_process, self.index)
+
+        # we should have some content
+        content = open(self.my_file).read()
+        self.assertEquals(content, 'to it')
+        self.assert_(not locker.is_locked(self.my_file))  
+        
+        # let's check the index file
+        index_file = open(self.index).readlines()
+        indexes = [f.split('#') for f in index_file]
+        index = indexes[0]
+        self.assertEquals(index[0], self.my_file)
+        self.assertEquals(index[1].strip(), 
+                          '6a94cc3e2b33c83937018b3ce365643c')
+
+        locker.with_lock(self.my_file, 'w', my_process2, self.index)
+
+        # the md5 should have changed
+        index_file = open(self.index).readlines()
+        indexes = [f.split('#') for f in index_file]
+        index = indexes[0] 
+        self.assertEquals(index[1].strip(), 
+                          '39d03242196d6cbf4389bfcfe2f2b989') 
+
+
 def test_suite():
     return unittest.TestSuite((unittest.makeSuite(TestLocker),))
     
