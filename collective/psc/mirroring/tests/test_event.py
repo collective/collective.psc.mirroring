@@ -14,6 +14,7 @@ from Products.PloneTestCase import PloneTestCase as ptc
 from Products.PloneTestCase.layer import PloneSite
 from Products.Archetypes.event import ObjectEditedEvent
 from Products.PloneSoftwareCenter.tests import base
+from ZODB.POSException import ConflictError 
 
 from zope.formlib import form
 from zope.event import notify
@@ -54,21 +55,31 @@ class TestCase(ptc.PloneTestCase):
         config = IFSMirrorConfiguration(self.portal)
         mirror_form = form.Fields(IFSMirrorConfiguration)
         mirror_form.get("path").field.set(config, unicode(self.file_path))
+        self.edited = ObjectEditedEvent(self.proj.relfolder.rel.file)
 
     def tearDown(self):
         shutil.rmtree(self.file_path)
 
     def test_copied(self):
-    
         # let's notify a IObjectEditedEvent event
-        edited = ObjectEditedEvent(self.proj.relfolder.rel.file)
-        notify(edited)
+        notify(self.edited)
        
         # we should have a file now in the folder
         contents = os.listdir(self.file_path)
         self.assertEquals(contents, ['file'])
 
+    def test_lock(self):
+        # let's lock the file
+        from collective.psc.mirroring.locker import with_lock
+        filename = join(self.file_path, 'file')
 
+        def locked_state(file_):
+            # let's try to notify here, we should get a conflict error
+            self.assertRaises(ConflictError, notify, self.edited)  
+        
+        with_lock(filename, 'wb', locked_state)
+
+        
 def test_suite():
     return unittest.TestSuite((unittest.makeSuite(TestCase),))
 
