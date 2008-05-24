@@ -54,6 +54,20 @@ class TestCase(ptc.PloneTestCase):
         lpath = locutil.current_path = form.Fields(IFSMirrorConfiguration).get("path").field.get(config)
         self.assertEqual(set_path, lpath)
 
+    def test_set_index(self):
+        self.setRoles(['Manager'])
+        config = IFSMirrorConfiguration(self.portal)
+        current_index = form.Fields(IFSMirrorConfiguration).get("index").field.get(config)
+        new_index = u"md5"
+        form.Fields(IFSMirrorConfiguration).get("index").field.set(config, new_index)
+        set_index = form.Fields(IFSMirrorConfiguration).get("index").field.get(config)
+        self.assertEquals(new_index, set_index)      
+        
+        locutil = getUtility(IFSMirrorConfiguration)
+        lindex = locutil.current_path = form.Fields(IFSMirrorConfiguration).get("index").field.get(config)
+        self.assertEqual(set_index, lindex)
+
+
 
 def test_suite():
     return unittest.TestSuite((unittest.makeSuite(TestCase),))

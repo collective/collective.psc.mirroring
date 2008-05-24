@@ -9,3 +9,5 @@ class FSMirrorConfiguration(SimpleItem):
     implements(IFSMirrorConfiguration)
     
     path = FieldProperty(IFSMirrorConfiguration['path'])
+    index = FieldProperty(IFSMirrorConfiguration['index'])
+

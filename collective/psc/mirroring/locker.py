@@ -33,7 +33,7 @@ def _update_index(index, filename):
                         if line.split('#') == 2]) 
         content[filename] = md5
     else:
-        content = {'filename': md5}
+        content = {filename: md5}
     index = open(index, 'w')
     try:
         for key, value in content.items():
@@ -49,6 +49,7 @@ def with_lock(filename, mode, callable_, index=None):
 
     The file is closed when the callable returns.
     """
+    filename = os.path.realpath(filename)
     file_ = open(filename, mode)
     file_lock = _get_lock_name(filename)
     if exists(file_lock):
@@ -69,14 +70,14 @@ def is_locked(filename):
     """Returns True if the filename is locked.""" 
     return exists(_get_lock_name(filename)) 
 
-def write_content(filename, stream):
+def write_content(filename, stream, index=None):
     """Writes stream content into filename.
     
     stream can be an iterator or an open file object."""
     def _write(f):
         for line in stream:
             f.write(line)
-    with_lock(filename, 'wb', _write)
+    with_lock(filename, 'wb', _write, index)
 
 def file_hash(filename):
     """returns a file hash"""

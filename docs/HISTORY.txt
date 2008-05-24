@@ -2,7 +2,10 @@ Changelog
 =========
 
 0.1.0 - Unreleased
-----------------
+------------------
+
+* Uses low-level file locking and 
+  an index file to keep track of files.
 
 * Initial release
 

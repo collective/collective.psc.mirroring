@@ -66,7 +66,11 @@ class TestCase(ptc.PloneTestCase):
        
         # we should have a file now in the folder
         contents = os.listdir(self.file_path)
-        self.assertEquals(contents, ['file'])
+        contents.sort()
+        self.assertEquals(contents, ['file', 'index'])
+        
+        # let's check the index file
+
 
     def test_lock(self):
         # let's lock the file

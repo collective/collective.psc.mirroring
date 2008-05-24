@@ -9,3 +9,7 @@ class IFSMirrorConfiguration(Interface):
 
     path = schema.TextLine(title=_(u"The path to store files in"),
                            required=True)
+
+    index = schema.TextLine(title=_(u"The name of the index file"),
+                            default=u'index')
+
