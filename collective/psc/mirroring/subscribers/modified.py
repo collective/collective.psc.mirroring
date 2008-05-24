@@ -41,9 +41,8 @@ def handlePSCFileModifed(context, event):
 
     # if the MD5 is equal, we don't do anything
     if os.path.exists(fullpath):
-        if file_hash(fullpath) == string_hash(data):
+        if file_hash(fullpath, index) == string_hash(data):
             return
-
     try:
         write_content(fullpath, data, index)
     except AlreadyLocked:

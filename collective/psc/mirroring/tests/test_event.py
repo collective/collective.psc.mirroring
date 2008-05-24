@@ -81,7 +81,9 @@ class TestCase(ptc.PloneTestCase):
 
         def locked_state(file_):
             # let's try to notify here, we should get a conflict error
-            self.assertRaises(ConflictError, notify, self.edited)  
+            self.proj.relfolder.rel.file.update_data('xx')
+            edited = ObjectEditedEvent(self.proj.relfolder.rel.file)
+            self.assertRaises(ConflictError, notify, edited)  
         
         with_lock(filename, 'wb', locked_state)
 

@@ -55,11 +55,11 @@ def with_lock(filename, mode, callable_, index=None):
     The file is closed when the callable returns.
     """
     filename = os.path.realpath(filename)
-    file_ = open(filename, mode)
     file_lock = _get_lock_name(filename)
     if exists(file_lock):
         raise AlreadyLocked('%s is already locked.' % filename)
     _write_file(file_lock, 'locked')
+    file_ = open(filename, mode)
     fcntl.flock(file_.fileno(), fcntl.LOCK_EX)
     try:
         try:
@@ -90,7 +90,7 @@ def string_hash(string):
 
 def file_hash(filename, index=None):
     """returns a file hash"""
-    if index is not None:
+    if index is not None and os.path.exists(index):
         content =  _read_file(index)
         content = [line.strip() for line in content.split('\n')
                    if line.strip() != '']
