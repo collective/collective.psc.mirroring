@@ -1,3 +1,8 @@
+"""
+locking system 
+
+XXX load the whole file in memory
+"""
 import fcntl
 import os
 from md5 import md5
@@ -79,7 +84,18 @@ def write_content(filename, stream, index=None):
             f.write(line)
     with_lock(filename, 'wb', _write, index)
 
-def file_hash(filename):
+def string_hash(string):
+    """returns a string hash"""
+    return md5(string).hexdigest()
+
+def file_hash(filename, index=None):
     """returns a file hash"""
+    if index is not None:
+        content =  _read_file(index)
+        content = [line.strip() for line in content.split('\n')
+                   if line.strip() != '']
+        content = dict([line.split('#') for line in content])
+        if filename in content:
+            return content[filename]
     return md5(open(filename).read()).hexdigest()
 

@@ -3,6 +3,8 @@ from os.path import join
 
 from collective.psc.mirroring.locker import write_content
 from collective.psc.mirroring.locker import AlreadyLocked
+from collective.psc.mirroring.locker import file_hash 
+from collective.psc.mirroring.locker import string_hash
 
 from zope.component import getUtility 
 from ZODB.POSException import ConflictError
@@ -36,6 +38,11 @@ def handlePSCFileModifed(context, event):
     fullpath = os.path.realpath(os.path.join(root, id_))
     if index == fullpath:
         raise IOError('Cannot use the same name than the index file')
+
+    # if the MD5 is equal, we don't do anything
+    if os.path.exists(fullpath):
+        if file_hash(fullpath) == string_hash(data):
+            return
 
     try:
         write_content(fullpath, data, index)

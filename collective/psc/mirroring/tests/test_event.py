@@ -70,7 +70,9 @@ class TestCase(ptc.PloneTestCase):
         self.assertEquals(contents, ['file', 'index'])
         
         # let's check the index file
-
+        content = open(join(self.file_path, 'index')).readlines()
+        content = content[0].split('#')
+        self.assertEquals(content[1].strip(), 'd41d8cd98f00b204e9800998ecf8427e')
 
     def test_lock(self):
         # let's lock the file
