@@ -5,6 +5,7 @@ XXX load the whole file in memory
 """
 import os
 from md5 import md5
+import time
 from os.path import join, dirname, basename, exists
 
 class AlreadyLocked(Exception):
@@ -45,6 +46,9 @@ def _update_index(index, filename):
     finally:
         index.close()
 
+# locked 5 minutes
+MAX_LOCK_TIME = 60 * 5 
+
 def with_lock(filename, mode, callable_, index=None):
     """Used to lock a file, open it, then
     call the callable_ with the file object.
@@ -56,8 +60,12 @@ def with_lock(filename, mode, callable_, index=None):
     filename = os.path.realpath(filename)
     file_lock = _get_lock_name(filename)
     if exists(file_lock):
-        raise AlreadyLocked('%s is already locked.' % filename)
-    _write_file(file_lock, 'locked')
+        # if the file was lock for too long, we 
+        # remove the lock
+        lock_date = float(_read_file(file_lock))
+        if lock_date + MAX_LOCK_TIME > time.time():
+            raise AlreadyLocked('%s is already locked.' % filename)
+    _write_file(file_lock, str(time.time()))
     file_ = open(filename, mode)
     try:
         try:
@@ -67,7 +75,9 @@ def with_lock(filename, mode, callable_, index=None):
         if index is not None:
              _update_index(index, filename)            
     finally:
-        os.remove(file_lock)
+        # lock can be lost
+        if os.path.exists(file_lock):   
+            os.remove(file_lock)
 
 def is_locked(filename):
     """Returns True if the filename is locked.""" 

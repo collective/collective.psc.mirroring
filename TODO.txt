@@ -1,8 +1,0 @@
-a better way to handle locking to avoid ghost locks:
-
-- remove the fnct stuff, we can do without it
-
-- put in the lock file the date, 
-so if someone tries to lock it again, 
-if the date > 5mn : we force an unlock
-

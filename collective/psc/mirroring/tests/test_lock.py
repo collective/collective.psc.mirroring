@@ -105,7 +105,25 @@ class TestLocker(unittest.TestCase):
         index = indexes[0] 
         self.assertEquals(index[1].strip(), 
                           '39d03242196d6cbf4389bfcfe2f2b989') 
+ 
+    def test_time_lock(self):
+        # make sure the lock is removed after a while
+        old = locker.MAX_LOCK_TIME
+        locker.MAX_LOCK_TIME = 0.5
+        
+        def my_process2(the_file):
+            self.assert_(locker.is_locked(self.my_file))
 
+        def my_process(the_file):
+            self.assert_(locker.is_locked(self.my_file))
+            time.sleep(1)
+            locker.with_lock(self.my_file, 'w', my_process2)
+
+        # let's lock a file
+        try:
+            locker.with_lock(self.my_file, 'w', my_process)
+        finally:
+            locker.MAX_LOCK_TIME = old
 
 def test_suite():
     return unittest.TestSuite((unittest.makeSuite(TestLocker),))
