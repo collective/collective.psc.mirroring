@@ -3,7 +3,6 @@ locking system
 
 XXX load the whole file in memory
 """
-import fcntl
 import os
 from md5 import md5
 from os.path import join, dirname, basename, exists
@@ -47,7 +46,7 @@ def _update_index(index, filename):
         index.close()
 
 def with_lock(filename, mode, callable_, index=None):
-    """Uses fcntl to lock a file, open it, then
+    """Used to lock a file, open it, then
     call the callable_ with the file object.
     
     filename is the file to lock, mode is the open mode.
@@ -60,7 +59,6 @@ def with_lock(filename, mode, callable_, index=None):
         raise AlreadyLocked('%s is already locked.' % filename)
     _write_file(file_lock, 'locked')
     file_ = open(filename, mode)
-    fcntl.flock(file_.fileno(), fcntl.LOCK_EX)
     try:
         try:
             callable_(file_) 
