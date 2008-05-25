@@ -1,0 +1,4 @@
+
+- deal with file suppression
+- copy files that are published
+
