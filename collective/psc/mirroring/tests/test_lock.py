@@ -133,7 +133,14 @@ class TestLocker(unittest.TestCase):
 
     def test_deletion(self):
 
-        open(self.my_file, 'w').write('xxx') 
+        def my(f):
+            f.write('wwww')
+
+        locker.with_lock(self.my_file, 'w', my, self.index)
+        
+        content = open(self.index).read().split('#') 
+        self.assertEquals(content[-1].strip(), 
+                          'e34a8899ef6468b74f8a1048419ccc8b')
 
         # let's remove a file
         locker.remove_file(self.my_file, self.index)

@@ -12,13 +12,14 @@ from Products.Five import zcml
 from Products.Five import fiveconfigure
 from Products.PloneTestCase import PloneTestCase as ptc
 from Products.PloneTestCase.layer import PloneSite
-from Products.Archetypes.event import ObjectEditedEvent
 from Products.PloneSoftwareCenter.tests import base
 from ZODB.POSException import ConflictError 
 
 from zope.formlib import form
 from zope.event import notify
 from zope.publisher.browser import TestRequest
+
+from Products.CMFCore.utils import getToolByName
 
 from collective.psc.mirroring.interfaces import IFSMirrorConfiguration
 import collective.psc.mirroring
@@ -40,11 +41,13 @@ class TestCase(ptc.PloneTestCase):
             pass
 
     def afterSetUp(self):
+        
         self.setRoles(('Manager',))
         self.portal.invokeFactory('PloneSoftwareCenter', 'psc')
         self.portal.psc.invokeFactory('PSCProject', 'proj')
         self.psc = self.portal.psc
         self.proj = self.portal.psc.proj
+        self.wf = getToolByName(self.proj, 'portal_workflow')
         self.proj.invokeFactory('PSCReleaseFolder', 'relfolder')
         self.proj.relfolder.invokeFactory('PSCRelease', 'rel') 
         self.proj.relfolder.rel.invokeFactory('PSCFile', 'file')
@@ -55,14 +58,15 @@ class TestCase(ptc.PloneTestCase):
         config = IFSMirrorConfiguration(self.portal)
         mirror_form = form.Fields(IFSMirrorConfiguration)
         mirror_form.get("path").field.set(config, unicode(self.file_path))
-        self.edited = ObjectEditedEvent(self.proj.relfolder.rel.file)
 
     def tearDown(self):
         shutil.rmtree(self.file_path)
 
     def test_copied(self):
-        # let's notify a IObjectEditedEvent event
-        notify(self.edited)
+        # let's publish a release
+        rel = self.proj.relfolder.rel 
+
+        self.wf.doActionFor(rel, 'release-alpha') 
        
         # we should have a file now in the folder
         contents = os.listdir(self.file_path)
@@ -74,7 +78,14 @@ class TestCase(ptc.PloneTestCase):
         content = content[0].split('#')
         self.assertEquals(content[1].strip(), 'd41d8cd98f00b204e9800998ecf8427e')
 
-    def test_lock(self):
+        # now let's hide it
+        self.wf.doActionFor(rel, 'hide')
+
+        # the file should be removed
+        contents = os.listdir(self.file_path)
+        self.assertEquals(contents, ['index'])
+
+    def _test_lock(self):
         # let's lock the file
         from collective.psc.mirroring.locker import with_lock
         filename = join(self.file_path, 'file')
@@ -82,7 +93,7 @@ class TestCase(ptc.PloneTestCase):
         def locked_state(file_):
             # let's try to notify here, we should get a conflict error
             self.proj.relfolder.rel.file.update_data('xx')
-            edited = ObjectEditedEvent(self.proj.relfolder.rel.file)
+            wf.doActionFor(rel, 'release-beta')
             self.assertRaises(ConflictError, notify, edited)  
         
         with_lock(filename, 'wb', locked_state)

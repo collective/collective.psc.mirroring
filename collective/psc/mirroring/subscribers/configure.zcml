@@ -3,8 +3,8 @@
  xmlns:browser="http://namespaces.zope.org/browser"
  >
 
- <zope:subscriber for="Products.PloneSoftwareCenter.interfaces.IFileContent
-                       Products.Archetypes.interfaces.IObjectEditedEvent"
-                  handler=".modified.handlePSCFileModifed" />
+ <zope:subscriber for="Products.PloneSoftwareCenter.interfaces.IReleaseContent
+                       Products.CMFCore.interfaces.IActionSucceededEvent"
+                  handler=".modified.handle_state_change" />
 
 </configure>

@@ -4,8 +4,12 @@ Changelog
 0.1.0 - Unreleased
 ------------------
 
+* use worklfow events to copy or remove file
+  [tarek]
+
 * Uses time-based file locking and 
   an index file to keep track of files.
+  [tarek]
 
 * Initial release
 
