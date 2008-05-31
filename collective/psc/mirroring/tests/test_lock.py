@@ -125,6 +125,25 @@ class TestLocker(unittest.TestCase):
         finally:
             locker.MAX_LOCK_TIME = old
 
+    def test_decorator(self):
+        # we also have a decorator
+        @locker.locked(self.my_file)
+        def something_done():
+            self.assert_(locker.is_locked(self.my_file))
+
+    def test_deletion(self):
+
+        open(self.my_file, 'w').write('xxx') 
+
+        # let's remove a file
+        locker.remove_file(self.my_file, self.index)
+        # should be gone
+        assert not os.path.exists(self.my_file)
+
+        # should be gone from index
+        content = open(self.index).read()    
+        self.assertEquals(content, '')
+
 def test_suite():
     return unittest.TestSuite((unittest.makeSuite(TestLocker),))
     
