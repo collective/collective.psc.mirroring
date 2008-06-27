@@ -24,12 +24,14 @@ from Products.CMFCore.utils import getToolByName
 from collective.psc.mirroring.interfaces import IFSMirrorConfiguration
 import collective.psc.mirroring
 
-ptc.setupPloneSite(products=["collective.psc.mirroring"])
+ptc.setupPloneSite(products=["collective.psc.mirroring", 
+                             "Products.PloneSoftwareCenter"])
 
 class TestCase(ptc.PloneTestCase):
     class layer(PloneSite):
         @classmethod
         def setUp(cls):
+            PloneSite.setUp()
             fiveconfigure.debug_mode = True
             zcml.load_config('configure.zcml',
                              collective.psc.mirroring)
@@ -38,7 +40,7 @@ class TestCase(ptc.PloneTestCase):
 
         @classmethod
         def tearDown(cls):
-            pass
+            PloneSite.tearDown()
 
     def afterSetUp(self):
         
