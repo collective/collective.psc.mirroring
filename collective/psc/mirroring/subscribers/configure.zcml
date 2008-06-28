@@ -7,4 +7,18 @@
                        Products.CMFCore.interfaces.IActionSucceededEvent"
                   handler=".modified.handle_state_change" />
 
+ <zope:subscriber for="Products.PloneSoftwareCenter.interfaces.IFileContent
+                       zope.app.container.interfaces.IObjectRemovedEvent"
+                  handler=".modified.handle_file_removed" /> 
+     
+ <zope:subscriber for="Products.PloneSoftwareCenter.interfaces.IFileContent
+                       zope.app.container.interfaces.IObjectAddedEvent"
+                  handler=".modified.handle_file_added" /> 
+  
+ <zope:subscriber for="Products.PloneSoftwareCenter.interfaces.IFileContent
+                       zope.app.container.interfaces.IObjectModifiedEvent"
+                  handler=".modified.handle_file_added" /> 
+   
+
+
 </configure>

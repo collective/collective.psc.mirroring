@@ -105,6 +105,34 @@ class TestCase(ptc.PloneTestCase):
         # using MD5 keys
         pass
 
+    def test_file_removed(self):
+        root = getUtility(IFSMirrorConfiguration).path
+        self.assertEquals(root, self.file_path)
+
+        rel = self.proj.relfolder.rel
+
+        # let's release
+        self.wf.doActionFor(rel, 'release-alpha')
+        
+        # let's check we have a file
+        contents = os.listdir(self.file_path)
+        self.assertEquals(contents, ['file', 'index'])
+
+        # we have a file, in a published release, let's remove it !
+        rel.manage_delObjects(['file'])
+
+        # let's check the file has been removed
+        contents = os.listdir(self.file_path)
+        self.assertEquals(contents, ['index'])
+
+        # let's add a file
+        f = rel.invokeFactory('PSCFile', 'file')
+        
+        # let's check we have a file
+        contents = os.listdir(self.file_path)
+        self.assertEquals(contents, ['file', 'index'])
+        
+
 def test_suite():
     return unittest.TestSuite((unittest.makeSuite(TestCase),))
 

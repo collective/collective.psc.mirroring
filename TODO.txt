@@ -1,9 +1,0 @@
-
-- we need to add another subscriber, that is called
-  when a file is added or removed in a published 
-  release, in order to synchronize the mirror
-  (at objectedited / deleted)
-
-  then we will have all cases covered
-
-
