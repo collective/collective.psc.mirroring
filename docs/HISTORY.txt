@@ -1,8 +1,13 @@
 Changelog
 =========
 
-0.1.0 - Unreleased
-------------------
+0.1.1 - (unreleased)
+--------------------
+
+Open for development.
+
+0.1.0 - (2008-06-28)
+--------------------
 
 * use workflow events to copy or remove file
   [tarek]
