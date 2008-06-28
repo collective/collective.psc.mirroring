@@ -54,6 +54,7 @@ class TestLocker(unittest.TestCase):
         
         w1 = Worker(self.my_file, 'worker1')
         w1.start()
+        time.sleep(0.1)
         self.assert_(locker.is_locked(self.my_file))
         self.assertRaises(locker.AlreadyLocked, 
                           locker.with_lock,
