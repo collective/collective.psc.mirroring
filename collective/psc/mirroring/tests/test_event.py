@@ -81,7 +81,7 @@ class TestCase(ptc.PloneTestCase):
         self.assertEquals(content[1].strip(), 'd41d8cd98f00b204e9800998ecf8427e')
 
         # now let's hide it
-        self.wf.doActionFor(rel, 'hide')
+        self.wf.doActionFor(rel, 'retract')
 
         # the file should be removed
         contents = os.listdir(self.file_path)

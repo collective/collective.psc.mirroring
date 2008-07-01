@@ -13,7 +13,7 @@ from ZODB.POSException import ConflictError
 from collective.psc.mirroring.interfaces import IFSMirrorConfiguration 
 from Products.CMFCore.utils import getToolByName
 
-files_shown = ('alpha', 'beta', 'final', 'release-candidate')
+files_shown = ('alpha', 'beta', 'final', 'release-candidate', 'hidden')
 
 def _get_mirror_config():
     return getUtility(IFSMirrorConfiguration)
