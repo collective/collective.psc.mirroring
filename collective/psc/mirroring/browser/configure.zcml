@@ -10,7 +10,7 @@
      class=".config.FSMirrorConfigurationForm"
      permission="cmf.ManagePortal"
      />
-
+  
   <zope:adapter
      for="Products.CMFPlone.Portal.PloneSite"
      provides="collective.psc.mirroring.interfaces.IFSMirrorConfiguration"

@@ -8,6 +8,7 @@ from collective.psc.mirroring.locker import string_hash
 from collective.psc.mirroring.locker import remove_file
 
 from zope.component import getUtility 
+from zope.component import ComponentLookupError
 from ZODB.POSException import ConflictError
 
 from collective.psc.mirroring.interfaces import IFSMirrorConfiguration 
@@ -16,7 +17,10 @@ from Products.CMFCore.utils import getToolByName
 files_shown = ('alpha', 'beta', 'final', 'release-candidate', 'hidden')
 
 def _get_mirror_config():
-    return getUtility(IFSMirrorConfiguration)
+    try:
+        return getUtility(IFSMirrorConfiguration)
+    except ComponentLookupError:
+        return None
 
 def _release_visible(rel):
     wf = getToolByName(rel, 'portal_workflow')
@@ -46,11 +50,12 @@ def handle_state_change(context, event):
     visible = _release_visible(context)
 
     # getting the folder
-    util = _get_mirror_config() 
+    util = _get_mirror_config()
+    if util is None or util.path is None:
+        # not installed or not configured
+        return None
+
     root = util.path
-    if root is None:
-        # nothing to be done on an unset path
-        return
     if not os.path.exists(root):
         raise IOError('%s does not exists' % root)
 
@@ -85,7 +90,8 @@ def handle_file_added(context, event):
         return 
  
     util = _get_mirror_config()     
-    if util.path is None:
+    if util is None or util.path is None:
+        # not installed or not configured
         return
     
     filepath = os.path.join(util.path, context.getId())
@@ -102,7 +108,8 @@ def handle_file_removed(context, event):
         return
 
     util = _get_mirror_config()     
-    if util.path is None:
+    if util is None or util.path is None:
+        # not installed or not configured
         return
 
     root = util.path
