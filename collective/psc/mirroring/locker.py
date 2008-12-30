@@ -169,7 +169,7 @@ def remove_file(filename, index=None):
     filename = os.path.realpath(filename)
     if is_locked(filename):
         raise AlreadyLocked('%s is already locked.' % filename)
-    #os.remove(filename)
+    os.remove(filename)
     if index is not None:
         _remove_from_index(index, filename)
 
