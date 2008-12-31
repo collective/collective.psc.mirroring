@@ -118,4 +118,7 @@ def handle_file_removed(context, event):
         remove_file(filepath)
     except AlreadyLocked:
         raise ConflictError('%s is locked' % filepath)
-
+    except OSError:
+        # might be gone somehow        
+	# XXX need logging here
+	pass
