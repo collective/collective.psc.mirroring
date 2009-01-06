@@ -29,7 +29,7 @@ def _release_visible(rel):
 
 def _write_file(file, path, index):
     if not hasattr(file, 'getDownloadableFile'):
-        continue    
+        return    
     # getting the file to push there
     file = file.getDownloadableFile()
     # let's get the data 
