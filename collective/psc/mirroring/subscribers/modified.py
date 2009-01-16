@@ -32,8 +32,13 @@ def _write_file(file, path, index):
         return    
     # getting the file to push there
     file = file.getDownloadableFile()
+    if file is None:
+        return   
+    
     # let's get the data 
     data = file.get_data()
+    if data == '':
+        return None 
     if index == path:
         raise IOError('Cannot use the same name than the index file')
 
@@ -95,7 +100,6 @@ def handle_file_added(context, event):
     if util is None or util.path is None:
         # not installed or not configured
         return
-    
     filepath = os.path.join(util.path, context.getId())
     _write_file(context, filepath, util.index)
   
