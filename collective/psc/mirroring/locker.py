@@ -83,14 +83,22 @@ def lock(filename):
     if is_locked(filename):
         raise AlreadyLocked('%s is already locked.' % filename)
     file_lock = _get_lock_name(filename)
-    _write_file(file_lock, str(time.time()))
+    try:
+        _write_file(file_lock, str(time.time()))
+    except IOError:
+        # could not lock the file
+        pass	
 
 def unlock(filename):
     """unlock a file"""
     file_lock = _get_lock_name(filename)
     if os.path.exists(file_lock):
-        os.remove(file_lock)
-
+        try:   
+            os.remove(file_lock)
+        except IOError:
+            # could not unlock the file
+            pass
+     	    
 def is_locked(filename):
     """Returns True if the filename is locked."""
     file_lock = _get_lock_name(filename)
