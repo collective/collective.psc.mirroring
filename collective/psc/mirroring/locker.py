@@ -135,7 +135,10 @@ def with_lock(filename, mode, callable_, index=None):
 
     The file is closed when the callable returns.
     """
+    index = os.path.split(index)[-1]
     filename = os.path.realpath(filename)
+    dirname = os.path.dirname(filename)
+    index = os.path.join(dirname, index)
     lock(filename)
     file_ = open(filename, mode)
     try:
