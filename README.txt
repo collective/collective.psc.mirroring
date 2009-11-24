@@ -1,6 +1,5 @@
 Introduction
 ============
 
-This tool synchronizes a system folder with releases made in PSC.
-
-
+This tool synchronizes a file system directory with releases made in
+Products.PloneSoftwareCenter. E.g. http://dist.plone.org/packages/
