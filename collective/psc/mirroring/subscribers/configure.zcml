@@ -16,7 +16,7 @@
                   handler=".modified.handle_file_added" /> 
   
  <zope:subscriber for="Products.PloneSoftwareCenter.interfaces.IFileContent
-                       zope.app.container.interfaces.IObjectModifiedEvent"
+                  zope.lifecycleevent.interfaces.IObjectModifiedEvent"
                   handler=".modified.handle_file_added" /> 
    
 
