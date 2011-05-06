@@ -1,7 +1,7 @@
 from zope.formlib import form
 from zope.component import getUtility
 from zope.i18nmessageid import MessageFactory
-from Products.Five.formlib import formbase
+from five.formlib import formbase
 
 from collective.psc.mirroring.interfaces import IFSMirrorConfiguration
 
